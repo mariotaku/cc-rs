@@ -3996,7 +3996,10 @@ fn autodetect_android_compiler(target: &str, host: &str, gnu: &str, clang: &str)
         .unwrap_or(None);
 
     if let Some(new_clang) = new_clang {
-        if Command::new(new_clang).output().is_ok() {
+        let new_clang_cmd = format!("{}.cmd", new_clang);
+        if host.contains("windows") && Command::new(&new_clang_cmd).output().is_ok() {
+            return new_clang_cmd;
+        } else if Command::new(new_clang).output().is_ok() {
             return (*new_clang).into();
         }
     }
